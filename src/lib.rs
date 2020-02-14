@@ -96,6 +96,7 @@ fn zip_pixel(r : Vec::<c_int>, g : Vec::<c_int>, b : Vec::<c_int>) -> Vec::<Pixe
 ///    image_load = readPPM_libc("test_read_image_c.ppm".to_string());
 /// }
 /// ```
+#[no_mangle]
 pub unsafe fn readPPM_libc(file_name : String) -> Image{
     let mut xsize : c_int = 0;
     let mut ysize : c_int = 0;
@@ -140,6 +141,7 @@ pub unsafe fn readPPM_libc(file_name : String) -> Image{
 ///     writePPM_libc("test_write_image.ppm".to_string(), &image);
 /// }
 /// ```
+#[no_mangle]
 pub unsafe fn writePPM_libc(file_name : String, image : &Image){
     let (mut r, mut g, mut b) = un_zip_pixel(&image.pixels);
     unsafe {

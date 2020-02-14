@@ -1,4 +1,6 @@
 
+use std::ops::Not;
+
 #[derive(Clone, Copy, Debug)]
 /// the pixel in the image ppm
 /// 
@@ -43,9 +45,6 @@ impl Pixels {
         format!("{} {} {}",self.red,self.green,self.blue)
     }
 
-    fn invert(&mut self){
-
-    }
 
     /// transform the RGB pixel to gray pixel
     /// 
@@ -69,6 +68,14 @@ impl PartialEq for Pixels {
     }
 }
 
+impl Not for Pixels {
+    type Output = Pixels;
+
+    fn not(self) -> Self::Output {
+        self.grayscale()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -87,6 +94,13 @@ mod tests {
 
         assert_eq!(pixel1, pixel2);
         assert_ne!(pixel1, pixel3);
+    }
+
+    #[test]
+    fn test_pixel_not(){
+        let pixels = Pixels::new(12, 11, 9);
+
+        assert_eq!(!pixels, pixels.grayscale());
     }
 
     #[test]

@@ -29,6 +29,7 @@ name = "ppm"
 path = "src/lib.rs"
 doctest = false
 bench = true
+crate-type = ["dylib", "rlib"]
 
 [[bench]]
 name = "benchers"
