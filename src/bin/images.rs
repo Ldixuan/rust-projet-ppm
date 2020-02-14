@@ -9,6 +9,13 @@ use std::path::Path;
 use std::os::raw::{c_char,c_int};
 
 #[derive(Clone, Debug)]
+/// A struct for image ppm
+/// 
+/// * `pixels` - a vector of pixel
+/// * `width` - the heigth of image ppm
+/// * `height` - the width of image ppm
+/// * `fileType` - the type of the image (always P3 here)
+/// * `maxValue` - max value of color on pixel
 pub struct Image{
     pub pixels : Vec<Pixels>,
     pub heigth : usize,

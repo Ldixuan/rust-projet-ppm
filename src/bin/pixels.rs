@@ -1,5 +1,10 @@
 
 #[derive(Clone, Copy, Debug)]
+/// the pixel in the image ppm
+/// 
+/// * `red` - the number of color red
+/// * `green` - the number of color green
+/// * `blue` - the number of color blue
 pub struct Pixels{
     pub red : u8,
     pub green : u8,
