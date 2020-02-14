@@ -55,8 +55,8 @@ Authors
 Principal original authors of the benchmark and statistics code in the Rust
 project are:
 
-+ Brian Anderson
-+ Graydon Hoare
++ EL YADINI Said
+
 
 Very very many have contributed to lib.rs and stats.rs however, so author
 credit is due to:
