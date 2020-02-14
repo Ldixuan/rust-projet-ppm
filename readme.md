@@ -4,7 +4,7 @@
 
 * **Lin Dixuan**
 * **Said EL YADINI**
-* **Omar**
+* **Omar YOUSFI**
 
 ## Built With
 

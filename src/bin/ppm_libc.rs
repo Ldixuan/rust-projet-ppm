@@ -3,10 +3,18 @@ extern crate libc;
 use std::os::raw::{c_char,c_int};
 
 extern  {
-    pub fn ppma_read(input_name: *const c_char, xsize : &mut c_int, ysize : &mut c_int, rgb_max : &mut c_int, r : *mut *mut c_int,
-          g : *mut *mut c_int,  b : *mut *mut c_int);
+    pub fn ppma_read(input_name: *const c_char, 
+        xsize : &mut c_int, ysize : &mut c_int,
+        rgb_max : &mut c_int,
+        r : *mut *mut c_int,
+        g : *mut *mut c_int, 
+        b : *mut *mut c_int);
     
-    pub fn ppma_write(file_out_name : *const c_char, xsize : c_int, ysize : c_int, r : *mut c_int, g : *mut c_int, b : *mut c_int) -> c_int;
+    pub fn ppma_write(file_out_name : *const c_char,
+        xsize : c_int, ysize : c_int, 
+        r : *mut c_int, 
+        g : *mut c_int, 
+        b : *mut c_int) -> c_int;
 }
 
 #[cfg(test)]
@@ -33,6 +41,8 @@ mod test{
 
         unsafe { ppma_read("test_read_ppm.ppm\0".as_ptr() as *const c_char, &mut xsize,
         &mut ysize , &mut rgb_max, &mut r, &mut g, &mut b) };
+
+        fs::remove_file(Path::new("test_read_ppm.ppm")).unwrap();
     }
 
     #[test]
@@ -44,7 +54,7 @@ mod test{
         unsafe {ppma_write("test_write_ppm.ppm\0".as_ptr() as *const c_char, 3 as c_int, 1 as c_int,
          r.as_mut_ptr() as *mut c_int, g.as_mut_ptr() as *mut c_int, b.as_mut_ptr() as *mut c_int);}
 
-         fs::remove_file(Path::new("test_write_ppm.ppm"));
+         fs::remove_file(Path::new("test_write_ppm.ppm")).unwrap();
     }
 
 

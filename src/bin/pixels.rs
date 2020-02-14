@@ -58,6 +58,18 @@ impl Pixels {
         let grep = ((0.299 as u8) * self.red) + ((0.587 as u8) * &self.green) + ((0.114 as u8)* &self.blue);
         Pixels::new(grep, grep, grep)
     }
+
+    /// inverse the pixel (255 - all the color)
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// let pixel = Pixels::new(34, 56, 102);
+    /// pixel.inverse
+    /// ```
+    pub fn inverse(&self) -> Self{
+        Pixels::new(255 - self.red, 255 - self.green, 255 - self.blue)
+    }
 }
 
 impl PartialEq for Pixels {
@@ -108,6 +120,13 @@ mod tests {
         let pixels_origin = Pixels::new(34, 56, 102);
         let pixels_gray = Pixels::new(34 * (0.299 as u8), 56 * (0.587 as u8), 102 * (0.114 as u8));
         assert_eq!(pixels_gray, pixels_origin.grayscale());
+    }
+
+    #[test]
+    fn test_pixel_inverse(){
+        let pixels_origin = Pixels::new(34, 56, 102);
+        let pixels_inverse = Pixels::new(255 - 34, 255 - 56, 255 - 102);
+        assert_eq!(pixels_inverse, pixels_origin.inverse());
     }
 
 

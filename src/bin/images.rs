@@ -72,7 +72,7 @@ impl  Image {
     pub fn new_with_file(filename: &Path) -> std::io::Result<Image>{
         let f = File::open(filename)?;
         let f = BufReader::new(f);
-        //let mut contents = fs::read_to_string(filename).expect("files not found");
+
         let mut pixels = Vec::new();
 
         let mut lines = f.lines();
@@ -154,6 +154,27 @@ impl  Image {
 
         for pixel in pixels{
             ret_pixels.push(pixel.grayscale());
+        }
+
+        let fileType = self.fileType.to_string();
+
+        Image::new(ret_pixels, self.heigth, self.width, fileType, self.maxValue)
+    }
+
+
+    ///inverse the image
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// let image_inverse = image.invert();
+    /// ```
+    pub fn invert(&self) -> Image{
+        let mut ret_pixels = Vec::new();
+        let pixels = self.pixels.clone();
+
+        for pixel in pixels{
+            ret_pixels.push(pixel.inverse());
         }
 
         let fileType = self.fileType.to_string();
@@ -401,6 +422,24 @@ mod tests {
         let image_compare = image.grayscale();
 
         assert_eq!(image_grayscale, image_compare);
+    }
+
+    #[test]
+    fn test_inverse(){
+        let mut pixels = Vec::new();
+        pixels.push(Pixels::new(7, 91, 43));
+        pixels.push(Pixels::new(14, 32, 56));
+        pixels.push(Pixels::new(23, 43, 32));
+        let image = Image::new(pixels, 1, 3, "P3".to_string(), 91);
+
+        let mut pixels_inverse = Vec::new();
+        for pixel in &image.pixels{
+            pixels_inverse.push(pixel.inverse());
+        }
+        let image_inverse = Image::new(pixels_inverse, 1, 3, "P3".to_string(), 91);
+        let image_compare = image.invert();
+
+        assert_eq!(image_inverse, image_compare);
     }
     
 }
