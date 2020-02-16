@@ -15,7 +15,7 @@ fn bench_new_with_file(b: &mut Bencher) {
     pixels.push(ppm::Pixels::new(7, 91, 43));
     pixels.push(ppm::Pixels::new(14, 32, 56));
     pixels.push(ppm::Pixels::new(23, 43, 32));
-    let image = ppm::Image::new(pixels, 1, 3, "P3".to_string(), 91);
+    let image = ppm::Image::new(pixels, 1, 3, ppm::FileType::P3, 91);
     image.save(Path::new("bench_new_with_file_image.ppm")).unwrap();
 
     b.iter(|| {
@@ -30,7 +30,7 @@ fn bench_save(b: &mut Bencher) {
     pixels.push(ppm::Pixels::new(7, 91, 43));
     pixels.push(ppm::Pixels::new(14, 32, 56));
     pixels.push(ppm::Pixels::new(23, 43, 32));
-    let image = ppm::Image::new(pixels, 1, 3, "P3".to_string(), 91);
+    let image = ppm::Image::new(pixels, 1, 3, ppm::FileType::P3, 91);
 
     b.iter(|| image.save(Path::new("bench_save_image.ppm")).unwrap());
 
@@ -43,7 +43,7 @@ fn bench_read_ppm_libc(b : &mut Bencher){
     pixels.push(ppm::Pixels::new(7, 91, 43));
     pixels.push(ppm::Pixels::new(14, 32, 56));
     pixels.push(ppm::Pixels::new(23, 43, 32));
-    let image = ppm::Image::new(pixels, 1, 3, "P3".to_string(), 91);
+    let image = ppm::Image::new(pixels, 1, 3, ppm::FileType::P3, 91);
     image.save(Path::new("bench_read_image.ppm")).unwrap();
 
     b.iter(|| {unsafe{
@@ -59,7 +59,7 @@ fn bench_write_ppm_libc(b : &mut Bencher){
     pixels.push(ppm::Pixels::new(7, 91, 43));
     pixels.push(ppm::Pixels::new(14, 32, 56));
     pixels.push(ppm::Pixels::new(23, 43, 32));
-    let image = ppm::Image::new(pixels, 1, 3, "P3".to_string(), 91);
+    let image = ppm::Image::new(pixels, 1, 3, ppm::FileType::P3, 91);
 
     b.iter(|| {
         unsafe{

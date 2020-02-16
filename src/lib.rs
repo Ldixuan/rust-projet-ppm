@@ -2,6 +2,8 @@ pub use images::Image;
 #[path = "bin/images.rs"]
 mod images;
 
+pub use images::FileType;
+
 pub use pixels::Pixels;
 #[path = "bin/pixels.rs"]
 mod pixels;
@@ -118,7 +120,7 @@ pub unsafe fn readPPM_libc(file_name : String) -> Image{
     }
     let pixels = zip_pixel(red_vec, green_vec, blue_vec);
 
-    Image::new(pixels, ysize as usize, xsize as usize, "P3".to_string(), rgb_max as usize)
+    Image::new(pixels, ysize as usize, xsize as usize, FileType::P3, rgb_max as usize)
 }
 
 /// write the image ppm use the lib c
@@ -189,7 +191,7 @@ mod tests {
         pixels.push(Pixels::new(7, 91, 43));
         pixels.push(Pixels::new(14, 32, 56));
         pixels.push(Pixels::new(23, 43, 32));
-        let image = Image::new(pixels, 1, 3, "P3".to_string(), 91);
+        let image = Image::new(pixels, 1, 3, FileType::P3, 91);
         image.save(Path::new("test_read_image_c.ppm")).unwrap();
         let image_load : Image;
 
@@ -208,7 +210,7 @@ mod tests {
         pixels.push(Pixels::new(7, 91, 43));
         pixels.push(Pixels::new(14, 32, 56));
         pixels.push(Pixels::new(23, 43, 32));
-        let image = Image::new(pixels, 1, 3, "P3".to_string(), 91);
+        let image = Image::new(pixels, 1, 3, FileType::P3, 91);
 
         unsafe{
             writePPM_libc("test_write_image.ppm".to_string(), &image);

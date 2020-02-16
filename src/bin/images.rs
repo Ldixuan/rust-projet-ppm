@@ -20,9 +20,20 @@ pub struct Image{
     pub pixels : Vec<Pixels>,
     pub heigth : usize,
     pub width : usize,
-    pub fileType : String,
+    pub fileType : FileType, // il existe une facon plus adapte
     pub maxValue : usize,
 }
+
+#[derive(Clone, Copy, Debug)]
+pub enum FileType {
+    P2,
+    P3,
+    P4,
+    P5,
+    P6,
+    None
+}
+
 
 impl  Image {
 
@@ -45,8 +56,54 @@ impl  Image {
     /// pixels.push(Pixels::new(23, 43, 32));
     /// let image = Image::new(pixels, 1, 3, "P3".to_string(), 91);
     /// ```
-    pub fn new(pixels : Vec<Pixels>, heigth : usize, width : usize, fileType : String, maxValue : usize) -> Image{
+    pub fn new(pixels : Vec<Pixels>, heigth : usize, width : usize, fileType : FileType, maxValue : usize) -> Image{
         Image{pixels, heigth, width, fileType, maxValue}
+    }
+
+    /// encode a string to fileType
+    /// 
+    /// # Arguments
+    /// 
+    /// * `fileType` - the name of file type
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// let fileType = Image::match_file_type("P3");
+    /// assert_eq!(fileType as isize, FileType::P3 as isize)
+    /// ```
+    pub fn match_file_type(fileType : &str) -> FileType{
+        match &*fileType {
+            "P2" => FileType::P2,
+            "P3" => FileType::P3,
+            "P4" => FileType::P4,
+            "P5" => FileType::P5,
+            "P6" => FileType::P6,
+            _ => FileType::None,
+        }
+    }
+
+    /// decode a string to fileType
+    /// 
+    /// # Arguments
+    /// 
+    /// * `fileType` - the name of file type
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// let fileType = Image::decode_file_type(FileType::P3);
+    /// assert_eq!(fileType, "P3")
+    /// ```
+    pub fn decode_file_type<'a>(fileType : FileType) -> &'a str{
+        match fileType {
+            FileType::P2 => "P2",
+            FileType::P3 => "P3",
+            FileType::P4 => "P4",
+            FileType::P5 => "P5",
+            FileType::P6 => "P6",
+            _ => ""
+        }
     }
 
     ///load the image from the file ppm
@@ -95,7 +152,7 @@ impl  Image {
             }
         }
 
-        Ok(Image{ pixels , heigth, width, fileType : lineType, maxValue})
+        Ok(Image{ pixels , heigth, width, fileType : Self::match_file_type(&lineType), maxValue})
     }
 
     ///save the image in a file of ppm
@@ -121,7 +178,7 @@ impl  Image {
     pub fn save(&self, filename : &Path) -> std::io::Result<()>{
         let mut f = File::create(filename)?;
         let mut buf = String::new();
-        buf = buf + &self.fileType + "\r\n";
+        buf = buf + Self::decode_file_type(self.fileType) + "\r\n";
         buf = buf + "#" + &filename.to_str().unwrap() + "\r\n";
         buf = buf + &format!("{} {}",self.heigth, self.width) + "\r\n"; 
         buf = buf + &self.maxValue.to_string() + "\r\n";
@@ -156,9 +213,7 @@ impl  Image {
             ret_pixels.push(pixel.grayscale());
         }
 
-        let fileType = self.fileType.to_string();
-
-        Image::new(ret_pixels, self.heigth, self.width, fileType, self.maxValue)
+        Image::new(ret_pixels, self.heigth, self.width, self.fileType, self.maxValue)
     }
 
 
@@ -177,9 +232,7 @@ impl  Image {
             ret_pixels.push(pixel.inverse());
         }
 
-        let fileType = self.fileType.to_string();
-
-        Image::new(ret_pixels, self.heigth, self.width, fileType, self.maxValue)
+        Image::new(ret_pixels, self.heigth, self.width, self.fileType, self.maxValue)
     }
 }
 
@@ -327,7 +380,7 @@ impl PartialEq for Image {
                 return false;
             }
         }
-        self.fileType == other.fileType &&
+        self.fileType as isize == other.fileType as isize &&
         self.maxValue == other.maxValue &&
         self.heigth == self.heigth &&
         self.width == self.width
@@ -396,7 +449,7 @@ mod tests {
         pixels.push(Pixels::new(7, 91, 43));
         pixels.push(Pixels::new(14, 32, 56));
         pixels.push(Pixels::new(23, 43, 32));
-        let image = Image::new(pixels, 1, 3, "P3".to_string(), 91);
+        let image = Image::new(pixels, 1, 3, FileType::P3, 91);
         image.save(Path::new("test_save_image.ppm"))?;
         let image_load = Image::new_with_file(Path::new("test_save_image.ppm"));
         assert_eq!(image, image_load?);
@@ -412,13 +465,13 @@ mod tests {
         pixels.push(Pixels::new(7, 91, 43));
         pixels.push(Pixels::new(14, 32, 56));
         pixels.push(Pixels::new(23, 43, 32));
-        let image = Image::new(pixels, 1, 3, "P3".to_string(), 91);
+        let image = Image::new(pixels, 1, 3, FileType::P3, 91);
 
         let mut pixels_grayscale = Vec::new();
         for pixel in &image.pixels{
             pixels_grayscale.push(pixel.grayscale());
         }
-        let image_grayscale = Image::new(pixels_grayscale, 1, 3, "P3".to_string(), 91);
+        let image_grayscale = Image::new(pixels_grayscale, 1, 3, FileType::P3, 91);
         let image_compare = image.grayscale();
 
         assert_eq!(image_grayscale, image_compare);
@@ -430,16 +483,28 @@ mod tests {
         pixels.push(Pixels::new(7, 91, 43));
         pixels.push(Pixels::new(14, 32, 56));
         pixels.push(Pixels::new(23, 43, 32));
-        let image = Image::new(pixels, 1, 3, "P3".to_string(), 91);
+        let image = Image::new(pixels, 1, 3, FileType::P3, 91);
 
         let mut pixels_inverse = Vec::new();
         for pixel in &image.pixels{
             pixels_inverse.push(pixel.inverse());
         }
-        let image_inverse = Image::new(pixels_inverse, 1, 3, "P3".to_string(), 91);
+        let image_inverse = Image::new(pixels_inverse, 1, 3, FileType::P3, 91);
         let image_compare = image.invert();
 
         assert_eq!(image_inverse, image_compare);
+    }
+
+    #[test]
+    fn test_decode_file_type(){
+        let fileType = Image::match_file_type("P3");
+        assert_eq!(fileType as isize, FileType::P3 as isize);
+    }
+
+    #[test]
+    fn test_match_file_type(){
+        let fileType = Image::decode_file_type(FileType::P3);
+        assert_eq!(fileType, "P3")
     }
     
 }
